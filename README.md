@@ -29,7 +29,7 @@ $config = [
     'db'        => 'records'
 ];
 $db_1 = new Database($config);
-// All calls should be done upon $db_1
+// All calls should be made to $db_1
 // For example:
 $db_1::insert("mytable",[
     'col_a' => 'val_a',
@@ -39,8 +39,8 @@ $db_1::insert("mytable",[
 
 ####Method 3
 ```php
-// Initialize with default configuration
 <?php
+// Initialize with default configuration
 Database::init();
 ```
 
@@ -77,7 +77,7 @@ $info = $db::fetch("Select id, username, status from users where id = :id LIMIT 
 ]);
 
 // Fetching multiple rows, on a DataBase instance
-$users = $db::fetch("Select id, username, status from users LIMIT 5 ORDER by id DESC",[
+$users = $db::fetchAll("Select id, username, status from users LIMIT 5 ORDER by id DESC",[
      ':id' => 5
 ]);
 
@@ -118,8 +118,8 @@ if(!Database::exists("my_db.table where id= :id",[':id' => 9]){
 }
 ```
 ### Using Results
+Note: Variables in double quotes are [parsed by php][1]
 ```php
-// Note: Variables in double quotes are [parsed by php][1]
 $users = Database::fetchAll("Select username,user_id,display_name from users");
 foreach($users as $user){
     echo "Username: $user[username]\n";
@@ -128,4 +128,5 @@ foreach($users as $user){
     echo "---------------------------";
 }
 ```
+
 [1]:http://php.net/manual/en/language.types.string.php
