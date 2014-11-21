@@ -4,7 +4,7 @@ PDO-Mysql is a PDO wrapper for php, it's guranteed to make your life easier. It 
 ## Examples:
 
 ### Initialization
-Note: If you're using HHVM version, You must either provide null as config or `shape('host' => 'yourhost','user' => 'youruser','db' => 'yourdb','pass' => 'yourpass')`
+Note: If you're using HHVM version of this library, You must either provide null as config or `shape('host' => 'yourhost','user' => 'youruser','db' => 'yourdb','pass' => 'yourpass')`
 ####Method 1
 ```php
 <?php
