@@ -4,39 +4,39 @@
  * @License SEE THE LICENSE FILE
  * @author Steel Brain <aneesiqbalbhatti@gmail.com>
  */
-class Database{
+class DataBase{
      /**
       * @var PDO
       */
      public static $link = null;
      public static $lastInserted = 0;
      public static $config = [];
-     public static $default_config = [
+     public static $config_default = [
           'host' => 'localhost',
           'user' => 'root',
           'db' => '',
           'pass' => ''
      ];
      public function __construct(array $config = []){// non static, means multiple instances at once
-          self::$config = array_merge(self::$default_config,$config);
+          self::$config = array_merge(self::$config_default,$config);
           self::__init();
      }
      public static function __preinit(){ // set default stuff
           if(defined('DB_HOST')){
-               self::$default_config['host'] = DB_HOST;
+               self::$config_default['host'] = DB_HOST;
           }
           if(defined('DB_USER')){
-               self::$default_config['user'] = DB_USER;
+               self::$config_default['user'] = DB_USER;
           }
           if(defined('DB_NAME')){
-               self::$default_config['db'] = DB_NAME;
+               self::$config_default['db'] = DB_NAME;
           }
           if(defined('DB_PASS')){
-               self::$default_config['pass'] = DB_PASS;
+               self::$config_default['pass'] = DB_PASS;
           }
      }
      public static function init(array $config = []){
-          self::$config = array_merge(self::$default_config,$config);
+          self::$config = array_merge(self::$config_default,$config);
           self::__init();
      }
      private static function __init(){
@@ -91,4 +91,4 @@ class Database{
           return self::$lastInserted;
      }
 }
-Database::__preinit();
+DataBase::__preinit();
