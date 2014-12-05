@@ -2,7 +2,6 @@
 /**
  * @Package PDO-Mysql
  * @License SEE THE LICENSE FILE
- * @author Steel Brain <aneesiqbalbhatti@gmail.com>
  */
 type DataBaseConfig = shape('host' => string,'user' => string,'db' => string,'pass' => string);
 class DataBase{
