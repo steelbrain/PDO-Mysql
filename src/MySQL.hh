@@ -57,6 +57,9 @@ class MySQL {
 
     return $this->lastInsertedId = $this->link->lastInsertId();
   }
+  public function from<T>(string $table): MySQLQuery<T> {
+    return (new MySQLQuery($this))->from($table);
+  }
 
   public static function create(MySQLconfig $config, string $charset = 'utf8mb4'): MySQL {
     $link = new PDO("mysql:charset=$charset;host=$config[Host];dbname=$config[Name]", $config['User'], $config['Pass'], [
