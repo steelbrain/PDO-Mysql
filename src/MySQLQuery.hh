@@ -2,6 +2,7 @@
 
 namespace steelbrain;
 use Exception;
+use PDO;
 
 class MySQLQuery<T> {
   public array<T> $Results = [];
@@ -69,6 +70,7 @@ class MySQLQuery<T> {
   }
   public function get(): ?T {
     if (!$this->executed) {
+      $this->Params['Limit'] = 1;
       $this->execute('select');
     } else if ($this->queryType !== 'select') {
       throw new Exception('Cannot get results from a non-select query');
@@ -87,20 +89,23 @@ class MySQLQuery<T> {
   private function execute(string $queryType): void {
     $this->queryType = $queryType;
     if ($this->Params['Where'] === '') {
-      $Where = '';
-    } else $Where = "WHERE $this->Params[Where]";
+      $where = '';
+    } else $where = "WHERE ".$this->Params['Where'];
 
     if ($queryType === 'exists') {
-      $Prefix = 'SELECT 1';
+      $prefix = 'SELECT 1';
     } else if ($queryType === 'delete') {
-      $Prefix = 'DELETE';
+      $prefix = 'DELETE';
     } else {
       // select
-      $Prefix = "Select $this->Params[Columns]";
+      $prefix = "Select ".$this->Params['Columns'];
     }
 
-    $statement = "$Prefix from $this->Params[Table] $Where LIMIT $this->Params[Limit]";
-    $this->Results = $this->link->query($statement, $this->Params['Params'])->fetchAll(PDO::FETCH_ASSOC);
+    $statement = "$prefix from ". $this->Params['Table'] ." $where LIMIT ". $this->Params['Limit'];
+    $query = $this->link->query($statement, $this->Params['Params']);
+    if ($queryType !== 'delete') {
+      $this->Results = $query->fetchAll(PDO::FETCH_ASSOC);
+    }
     $this->executed = true;
   }
 }
