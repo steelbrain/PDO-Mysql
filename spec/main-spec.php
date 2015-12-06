@@ -25,31 +25,31 @@ function runTests() {
         expect($result)->toBe(['a' => '2']);
       });
     });
-    describe('fetch', function() use ($Connection) {
-      $query = $Connection->fetch('Select name from test where id = 1 LIMIT 1');
-      expect($query)->toBe(['name' => 'Wow']);
+    describe('MySQL Query', function() use ($Connection) {
+      describe('get', function() use ($Connection) {
+        $result = $Connection->from('test')->select('name')-> get();
+        expect($result)->toBe(['name' => 'Wow']);
+      });
+      describe('getAll', function() use ($Connection) {
+        $result = $Connection->from('test')->select('name')->limit(2)->getAll();
+        expect($result)->toBe([['name' => 'Wow'], ['name' => 'Hey']]);
+      });
+      describe('exists', function() use ($Connection) {
+        $result = $Connection->from('test')->select('name')->where('name = "Wow"')->exists();
+        expect($result)->toBe(true);
+        $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
+        expect($result)->toBe(false);
+      });
     });
-    describe('fetchAll', function() use ($Connection) {
-      $query = $Connection->fetchAll('Select name from test');
-      expect($query)->toBe([['name' => 'Wow'], ['name' => 'Hey']]);
-    });
-    describe('fetchCol', function() use ($Connection) {
-      $query = $Connection->fetchCol('Select name from test LIMIT 1');
-      expect($query)->toBe('Wow');
-    });
-    describe('exists', function() use ($Connection) {
-      $query = $Connection->exists('Select 1 from test where name = "Wow" LIMIT 1');
-      expect($query)->toBe(true);
-      $query = $Connection->exists('Select 1 from test where name = "Beep" LIMIT 1');
-      expect($query)->toBe(false);
-    });
-    describe('insert', function() use ($Connection) {
-      $query = $Connection->exists('Select 1 from test where name = "Beep" LIMIT 1');
-      expect($query)->toBe(false);
+    describe('insert && MySQLQuery::delete', function() use ($Connection) {
+      $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
+      expect($result)->toBe(false);
       $Connection->insert('test', ['name' => 'Beep']);
-      $query = $Connection->exists('Select 1 from test where name = "Beep" LIMIT 1');
-      expect($query)->toBe(true);
-      $Connection->query('Delete from test where name = "Beep"');
+      $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
+      expect($result)->toBe(true);
+      $Connection->from('test')->where('name = "Beep"')->delete();
+      $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
+      expect($result)->toBe(false);
     });
   });
 }
