@@ -23,24 +23,6 @@ class MySQL {
     }
     return $query;
   }
-  public function fetch<T>(string $statement, ?array<string, mixed> $parameters = null): ?T {
-    $result = $this->query($statement, $parameters)->fetch(PDO::FETCH_ASSOC);
-    if ($result === false) {
-      return null;
-    } else return $result;
-  }
-  public function fetchCol<T>(string $statement, ?array<string, mixed> $parameters = null): ?T {
-    $result = $this->query($statement, $parameters)->fetch(PDO::FETCH_NUM);
-    if ($result === false) {
-      return null;
-    } else return $result[0];
-  }
-  public function fetchAll<T>(string $statement, ?array<string, mixed> $parameters = null): array<T> {
-    return $this->query($statement, $parameters)->fetchAll(PDO::FETCH_ASSOC);
-  }
-  public function exists(string $statement, ?array<string, mixed> $parameters = null): bool {
-    return $this->query($statement, $parameters)->rowCount() > 0;
-  }
   public function insert(string $table, array<string, mixed> $paramters): int {
     $keys = [];
     $values = [];
