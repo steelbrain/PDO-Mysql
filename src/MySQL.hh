@@ -18,6 +18,8 @@ class MySQL {
     $query = $this->link->prepare($statement);
     if ($parameters !== null) {
       $query->execute($parameters);
+    } else {
+      $query->execute();
     }
     return $query;
   }
@@ -53,9 +55,9 @@ class MySQL {
     $keys = implode(', ', $keys);
     $placeholders = implode(', ', $placeholders);
 
-    $query = $this->query("Insert into $table ($keys) VALUES ($placeholders)", $values);
+    $this->query("Insert into $table ($keys) VALUES ($placeholders)", $values);
 
-    return $this->lastInsertedId = $this->link->lastInsertId();
+    return $this->lastInsertedId = (int) $this->link->lastInsertId();
   }
   public function from<T>(string $table): MySQLQuery<T> {
     return (new MySQLQuery($this))->from($table);
