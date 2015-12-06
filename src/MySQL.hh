@@ -18,6 +18,8 @@ class MySQL {
     $query = $this->link->prepare($statement);
     if ($parameters !== null) {
       $query->execute($parameters);
+    } else {
+      $query->execute();
     }
     return $query;
   }
