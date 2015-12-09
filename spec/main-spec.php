@@ -41,12 +41,20 @@ function runTests() {
         expect($result)->toBe(false);
       });
     });
-    describe('insert && MySQLQuery::delete', function() use ($Connection) {
+    describe('insert && MySQLQuery::{update, delete}', function() use ($Connection) {
       $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
       expect($result)->toBe(false);
+
       $Connection->insert('test', ['name' => 'Beep']);
+
       $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
       expect($result)->toBe(true);
+
+      $Connection->from('test')->where('name = "Beep"')->update('name = "haha"');
+
+      $result = $Connection->from('test')->select('name')->where('name = "haha"')->exists();
+      expect($result)->toBe(true);
+
       $Connection->from('test')->where('name = "Beep"')->delete();
       $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
       expect($result)->toBe(false);
