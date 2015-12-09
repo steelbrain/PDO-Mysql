@@ -13,12 +13,14 @@ class MySQLQuery<T> {
     'Columns' => string,
     'Where' => string,
     'Params' => array<string, mixed>,
+    'Update' => string,
     'Limit' => int
   ) $Params = shape(
     'Table' => '',
     'Columns' => '',
     'Where' => '',
     'Params' => [],
+    'Update' => '',
     'Limit' => 1
   );
   public function __construct(public MySQL $link) { }
@@ -35,6 +37,25 @@ class MySQLQuery<T> {
     }
 
     return $this;
+  }
+  public function update($clause): void {
+    if ($this->executed) {
+      throw new Exception('Query has already been executed');
+    }
+
+    if (is_array($clause)) {
+      $clauses = [];
+      foreach($clauses as $key => $value) {
+        $this->Params['Params'][":update_$key"] = $value;
+        $clauses[] = "$key = :update_$key";
+      }
+      $this->Params['Update'] = implode(', ', $clauses);
+    } else {
+      invariant(is_string($clause), 'Clause parameter is not a string');
+      $this->Params['Update'] = $clause;
+    }
+
+    $this->execute('update');
   }
   public function where($clause): this {
     if (is_array($clause)) {
@@ -92,18 +113,20 @@ class MySQLQuery<T> {
       $where = '';
     } else $where = "WHERE ".$this->Params['Where'];
 
-    if ($queryType === 'exists') {
-      $prefix = 'SELECT 1';
+    if ($queryType === 'update') {
+      $prefix = 'UPDATE '.$this->Params['Table'].' SET '.$this->Params['Update'];
+    } else if ($queryType === 'exists') {
+      $prefix = 'SELECT 1 from '.$this->Params['Table'];
     } else if ($queryType === 'delete') {
-      $prefix = 'DELETE';
+      $prefix = 'DELETE from '.$this->Params['Table'];
     } else {
       // select
-      $prefix = "Select ".$this->Params['Columns'];
+      $prefix = "Select ".$this->Params['Columns'].' from '.$this->Params['Table'];
     }
 
-    $statement = "$prefix from ". $this->Params['Table'] ." $where LIMIT ". $this->Params['Limit'];
+    $statement = "$prefix $where LIMIT ". $this->Params['Limit'];
     $query = $this->link->query($statement, $this->Params['Params']);
-    if ($queryType !== 'delete') {
+    if ($queryType !== 'delete' && $queryType !== 'update') {
       $this->Results = $query->fetchAll(PDO::FETCH_ASSOC);
     }
     $this->executed = true;
