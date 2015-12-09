@@ -45,7 +45,7 @@ class MySQLQuery<T> {
 
     if (is_array($clause)) {
       $clauses = [];
-      foreach($clauses as $key => $value) {
+      foreach($clause as $key => $value) {
         $this->Params['Params'][":update_$key"] = $value;
         $clauses[] = "$key = :update_$key";
       }
