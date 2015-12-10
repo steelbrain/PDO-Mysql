@@ -40,6 +40,11 @@ function runTests() {
         $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
         expect($result)->toBe(false);
       });
+      describe('orderBy', function() use ($Connection) {
+        $result = $Connection->from('test')->select('name')->orderBy(['name' => 'asc'])->get();
+        invariant($result !== null, 'Result not found');
+        expect($result['name'])->toBe('Hey');
+      });
     });
     describe('insert && MySQLQuery::{update, delete}', function() use ($Connection) {
       $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
