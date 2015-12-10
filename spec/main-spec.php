@@ -55,8 +55,8 @@ function runTests() {
       $result = $Connection->from('test')->select('name')->where('name = "haha"')->exists();
       expect($result)->toBe(true);
 
-      $Connection->from('test')->where('name = "Beep"')->delete();
-      $result = $Connection->from('test')->select('name')->where('name = "Beep"')->exists();
+      $Connection->from('test')->where('name = "haha"')->delete();
+      $result = $Connection->from('test')->select('name')->where('name = "haha"')->exists();
       expect($result)->toBe(false);
     });
   });
