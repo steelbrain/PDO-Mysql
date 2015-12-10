@@ -14,6 +14,7 @@ class MySQLQuery<T> {
     'Where' => string,
     'Params' => array<string, mixed>,
     'Update' => string,
+    'Sort' => string,
     'Limit' => int
   ) $Params = shape(
     'Table' => '',
@@ -21,6 +22,7 @@ class MySQLQuery<T> {
     'Where' => '',
     'Params' => [],
     'Update' => '',
+    'Sort' => '',
     'Limit' => 1
   );
   public function __construct(public MySQL $link) { }
@@ -72,6 +74,24 @@ class MySQLQuery<T> {
 
     return $this;
   }
+  public function orderBy($clause): this {
+    if (is_array($clause)) {
+      $clauses = [];
+      foreach($clause as $key => $value) {
+        if (is_int($key)) {
+          $clauses[] = $value;
+        } else {
+          $clauses[] = "$key $value";
+        }
+      }
+      $this->Params['Sort'] = implode(', ', $clauses);
+    } else {
+      invariant(is_string($clause), 'Clause parameter is not a string');
+      $this->Params['Sort'] = $clause;
+    }
+
+    return $this;
+  }
   public function limit(int $limit): this {
     $this->Params['Limit'] = $limit;
     return $this;
@@ -111,7 +131,10 @@ class MySQLQuery<T> {
     $this->queryType = $queryType;
     if ($this->Params['Where'] === '') {
       $where = '';
-    } else $where = "WHERE ".$this->Params['Where'];
+    } else $where = 'WHERE '.$this->Params['Where'];
+    if ($this->Params['Sort'] === '') {
+      $sort = '';
+    } else $sort = 'ORDER BY '.$this->Params['Sort'];
 
     if ($queryType === 'update') {
       $prefix = 'UPDATE '.$this->Params['Table'].' SET '.$this->Params['Update'];
@@ -124,7 +147,7 @@ class MySQLQuery<T> {
       $prefix = "Select ".$this->Params['Columns'].' from '.$this->Params['Table'];
     }
 
-    $statement = "$prefix $where LIMIT ". $this->Params['Limit'];
+    $statement = "$prefix $where $sort LIMIT ". $this->Params['Limit'];
     $query = $this->link->query($statement, $this->Params['Params']);
     if ($queryType !== 'delete' && $queryType !== 'update') {
       $this->Results = $query->fetchAll(PDO::FETCH_ASSOC);
