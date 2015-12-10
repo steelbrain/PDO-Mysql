@@ -26,6 +26,7 @@ class MySQLQuery<T> {
   public function where(string | Array<string, mixed> $clause): this
   public function update(string | Array<string, mixed> $clause): void
   public function delete(string | Array<string, mixed> $clause): void
+  public function orderBy(string | Array<string> $columns): this
   public function limit(int $limit):t his
   public function exists(): bool
   public function get(): ?T
