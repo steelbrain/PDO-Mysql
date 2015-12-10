@@ -28,6 +28,7 @@ class MySQLQuery<T> {
   public function delete(string | Array<string, mixed> $clause): void
   public function orderBy(string | Array<string> $columns): this
   public function limit(int $limit):t his
+  public function offset(int $offset):t his
   public function exists(): bool
   public function get(): ?T
   public function getAll(): Array<T>

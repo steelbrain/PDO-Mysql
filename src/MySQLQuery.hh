@@ -15,7 +15,8 @@ class MySQLQuery<T> {
     'Params' => array<string, mixed>,
     'Update' => string,
     'Sort' => string,
-    'Limit' => int
+    'Limit' => int,
+    'Offset' => int
   ) $Params = shape(
     'Table' => '',
     'Columns' => '',
@@ -23,7 +24,8 @@ class MySQLQuery<T> {
     'Params' => [],
     'Update' => '',
     'Sort' => '',
-    'Limit' => 1
+    'Limit' => 1,
+    'Offset' => 0
   );
   public function __construct(public MySQL $link) { }
   public function from(string $table): this {
@@ -96,6 +98,10 @@ class MySQLQuery<T> {
     $this->Params['Limit'] = $limit;
     return $this;
   }
+  public function offset(int $offset): this {
+    $this->Params['Offset'] = $offset;
+    return $this;
+  }
   public function exists(): bool {
     if (!$this->executed) {
       $this->Params['Limit'] = 1;
@@ -147,7 +153,7 @@ class MySQLQuery<T> {
       $prefix = "Select ".$this->Params['Columns'].' from '.$this->Params['Table'];
     }
 
-    $statement = "$prefix $where $sort LIMIT ". $this->Params['Limit'];
+    $statement = "$prefix $where $sort LIMIT ". $this->Params['Limit'].' OFFSET '.$this->Params['Offset'];
     $query = $this->link->query($statement, $this->Params['Params']);
     if ($queryType !== 'delete' && $queryType !== 'update') {
       $this->Results = $query->fetchAll(PDO::FETCH_ASSOC);
