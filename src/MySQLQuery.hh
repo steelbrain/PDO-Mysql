@@ -153,7 +153,7 @@ class MySQLQuery<T> {
       $prefix = "Select ".$this->Params['Columns'].' from '.$this->Params['Table'];
     }
 
-    $statement = "$prefix $where $sort LIMIT ". $this->Params['Limit'].' OFFSET '.$this->Params['Offset'];
+    $statement = "$prefix $where $sort LIMIT ". $this->Params['Limit'].($queryType === 'select'? ' OFFSET '.$this->Params['Offset'] : '');
     $query = $this->link->query($statement, $this->Params['Params']);
     if ($queryType !== 'delete' && $queryType !== 'update') {
       $this->Results = $query->fetchAll(PDO::FETCH_ASSOC);
