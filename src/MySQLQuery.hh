@@ -34,7 +34,9 @@ class MySQLQuery<T> {
   }
   public function select($columns): this {
     if (is_array($columns)) {
-      $this->Params['Columns'] = implode(', ', $columns);
+      $this->Params['Columns'] = implode(', ', array_map(function($match) {
+        return '`'.$match.'`';
+      }, $columns));
     } else {
       invariant(is_string($columns), 'Columns parameter is not a string');
       $this->Params['Columns'] = $columns;
@@ -51,7 +53,7 @@ class MySQLQuery<T> {
       $clauses = [];
       foreach($clause as $key => $value) {
         $this->Params['Params'][":update_$key"] = $value;
-        $clauses[] = "$key = :update_$key";
+        $clauses[] = "`$key` = :update_$key";
       }
       $this->Params['Update'] = implode(', ', $clauses);
     } else {
@@ -66,7 +68,7 @@ class MySQLQuery<T> {
       $clauses = [];
       foreach($clause as $key => $value) {
         $this->Params['Params'][":where_$key"] = $value;
-        $clauses[] = "$key = :where_$key";
+        $clauses[] = "`$key` = :where_$key";
       }
       $this->Params['Where'] = implode(' AND ', $clauses);
     } else {

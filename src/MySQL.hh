@@ -29,7 +29,7 @@ class MySQL {
     $placeholders = [];
 
     foreach($paramters as $key => $value) {
-      $keys[] = $key;
+      $keys[] = '`'.$key.'`';
       $values[":$key"] = $value;
       $placeholders[] = ":$key";
     }
